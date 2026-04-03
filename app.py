@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-#import pronouncing
 import os
 
 # wordfreq for real corpus-based frequency scores
@@ -14,7 +13,7 @@ app = Flask(__name__, static_folder="static")
 CORS(app)
 
 # =========================================
-# 🔥 Difficulty Function (NEW)
+# Difficulty Function
 # =========================================
 def get_difficulty_level(score):
     if score <= 6:
@@ -84,17 +83,9 @@ def quadgraphs_rule(word):
     score = sum([1 for x in g if x in word])
     return {"rule": "Quadgraphs", "score": min(score, 2)}
 
+# 🔥 FIXED
 def multi_syllable_rule(word):
-  return {"rule": "Syllables", "score": 1}
-    if phones:
-        s = pronouncing.syllable_count(phones[0])
-        if s == 1:
-            return {"rule": "Syllables", "score": 0}
-        elif s <= 3:
-            return {"rule": "Syllables", "score": 1}
-        else:
-            return {"rule": "Syllables", "score": 2}
-    return {"rule": "Syllables", "score": 0}
+    return {"rule": "Syllables", "score": 1}
 
 def silent_letters_rule(word):
     if word.startswith(("kn","wr","ps")):
@@ -189,5 +180,5 @@ def static_files(filename):
 # RUN
 # =========================================
 if __name__ == "__main__":
-    print("\n🟢 Running on http://localhost:5000\n")
+    print("\n🟢 Running...\n")
     app.run(host="0.0.0.0", port=10000)
