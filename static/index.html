@@ -1,419 +1,1156 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lexia — Word Difficulty Analyzer</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --blue:#5b96ca; --blue-light:#deeaf6; --blue-dark:#2f5f87;
-  --pink:#f1b4af; --pink-light:#fce8e7; --pink-dark:#a84e48;
-  --green:#59a685; --green-light:#d7f0e6; --green-dark:#2a6b52;
-  --yellow:#fcda81; --yellow-light:#fef6d8; --yellow-dark:#8a6a00;
-  --bg:#FAFAF8; --surface:#fff; --surface2:#F4F3F0;
-  --ink:#1C1917; --ink2:#57534E; --ink3:#A8A29E;
-  --border:#E7E5E0; --border2:#D0CCC6;
-  --r:10px; --rl:16px; --rxl:22px;
-  --shadow:0 1px 4px rgba(0,0,0,.06),0 6px 20px rgba(0,0,0,.05);
-}
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.65;min-height:100vh}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lexia — Word Difficulty Analyzer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --blue: #5b96ca;
+        --blue-light: #deeaf6;
+        --blue-dark: #2f5f87;
+        --pink: #f1b4af;
+        --pink-light: #fce8e7;
+        --pink-dark: #a84e48;
+        --green: #59a685;
+        --green-light: #d7f0e6;
+        --green-dark: #2a6b52;
+        --yellow: #fcda81;
+        --yellow-light: #fef6d8;
+        --yellow-dark: #8a6a00;
+        --bg: #fafaf8;
+        --surface: #fff;
+        --surface2: #f4f3f0;
+        --ink: #1c1917;
+        --ink2: #57534e;
+        --ink3: #a8a29e;
+        --border: #e7e5e0;
+        --border2: #d0ccc6;
+        --r: 10px;
+        --rl: 16px;
+        --rxl: 22px;
+        --shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 6px 20px rgba(0, 0, 0, 0.05);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.65;
+        min-height: 100vh;
+      }
 
-/* NAV */
-nav{background:var(--surface);border-bottom:1.5px solid var(--border);position:sticky;top:0;z-index:100}
-.nav-inner{max-width:960px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:62px}
-.nav-logo{display:flex;align-items:center;gap:9px;cursor:pointer;text-decoration:none}
-.nav-logo img{height:36px;width:auto}
-.nav-logo-name{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);letter-spacing:-.02em}
-.nav-links{display:flex;gap:1.5rem;align-items:center}
-.nav-link{font-size:.875rem;color:var(--ink2);cursor:pointer;font-weight:500;padding:5px 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
-.nav-link:hover{color:var(--ink)}
-.nav-link.active{color:var(--ink);border-bottom-color:var(--blue)}
-.nav-cta{background:var(--blue);color:#fff;border:none;border-radius:var(--r);padding:8px 20px;font-size:.875rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s}
-.nav-cta:hover{opacity:.85}
+      /* NAV */
+      nav {
+        background: var(--surface);
+        border-bottom: 1.5px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .nav-inner {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 62px;
+      }
+      .hero-logo {
+        margin: 0 auto 2rem;
+        width: 120px;
+        height: 120px;
+      }
+      .nav-logo img {
+        height: 48px;
+        width: auto;
+      }
+      .nav-logo-name {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.4rem;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+      }
+      .nav-link {
+        font-size: 0.875rem;
+        color: var(--ink2);
+        cursor: pointer;
+        font-weight: 500;
+        padding: 5px 0;
+        border-bottom: 2px solid transparent;
+        transition:
+          color 0.2s,
+          border-color 0.2s;
+      }
+      .nav-link:hover {
+        color: var(--ink);
+      }
+      .nav-link.active {
+        color: var(--ink);
+        border-bottom-color: var(--blue);
+      }
+      .nav-cta {
+        background: var(--blue);
+        color: #fff;
+        border: none;
+        border-radius: var(--r);
+        padding: 8px 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        transition: opacity 0.2s;
+      }
+      .nav-cta:hover {
+        opacity: 0.85;
+      }
 
-/* PAGES */
-.page{display:none}
-.page.active{display:block;animation:up .3s ease both}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+      /* PAGES */
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+        animation: up 0.3s ease both;
+      }
+      @keyframes up {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-/* HOME */
-.home-wrap{max-width:960px;margin:0 auto;padding:0 2rem}
-.hero{padding:5rem 0 4rem;text-align:center}
-.hero-logo{margin:0 auto 2rem;width:80px;height:80px}
-.hero h1{font-family:'DM Serif Display',serif;font-size:3.25rem;line-height:1.1;letter-spacing:-.03em;margin-bottom:1rem}
-.hero h1 em{font-style:italic;color:var(--blue)}
-.hero p{font-size:1.05rem;color:var(--ink2);max-width:520px;margin:0 auto 2rem;font-weight:300;line-height:1.75}
-.btn-primary{background:var(--blue);color:#fff;border:none;border-radius:var(--r);padding:13px 28px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s}
-.btn-primary:hover{opacity:.85}
-.strip{height:3px;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--pink),var(--green),var(--yellow));margin:4rem 0;opacity:.5}
+      /* HOME */
+      .home-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+      .hero {
+        padding: 5rem 0 4rem;
+        text-align: center;
+      }
+      .hero-logo {
+        margin: 0 auto 2rem;
+        width: 80px;
+        height: 80px;
+      }
+      .hero h1 {
+        font-family: "DM Serif Display", serif;
+        font-size: 3.25rem;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        margin-bottom: 1rem;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--blue);
+      }
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--ink2);
+        max-width: 520px;
+        margin: 0 auto 2rem;
+        font-weight: 300;
+        line-height: 1.75;
+      }
+      .btn-primary {
+        background: var(--blue);
+        color: #fff;
+        border: none;
+        border-radius: var(--r);
+        padding: 13px 28px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        transition: opacity 0.2s;
+      }
+      .btn-primary:hover {
+        opacity: 0.85;
+      }
+      .strip {
+        height: 3px;
+        border-radius: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--blue),
+          var(--pink),
+          var(--green),
+          var(--yellow)
+        );
+        margin: 4rem 0;
+        opacity: 0.5;
+      }
 
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:4rem}
-.ac{border-radius:var(--rl);padding:1.75rem;border:1.5px solid var(--border)}
-.ac.blue{background:var(--blue-light)} .ac.pink{background:var(--pink-light)}
-.ac.green{background:var(--green-light)} .ac.yellow{background:var(--yellow-light)}
-.ac h3{font-size:.95rem;font-weight:600;margin-bottom:.4rem;color:var(--ink)}
-.ac p{font-size:.85rem;color:var(--ink2);line-height:1.68}
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-bottom: 4rem;
+      }
+      .ac {
+        border-radius: var(--rl);
+        padding: 1.75rem;
+        border: 1.5px solid var(--border);
+      }
+      .ac.blue {
+        background: var(--blue-light);
+      }
+      .ac.pink {
+        background: var(--pink-light);
+      }
+      .ac.green {
+        background: var(--green-light);
+      }
+      .ac.yellow {
+        background: var(--yellow-light);
+      }
+      .ac h3 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        color: var(--ink);
+      }
+      .ac p {
+        font-size: 0.85rem;
+        color: var(--ink2);
+        line-height: 1.68;
+      }
 
-.section-title{font-family:'DM Serif Display',serif;font-size:1.75rem;letter-spacing:-.02em;margin-bottom:.5rem}
-.section-sub{font-size:.9rem;color:var(--ink2);margin-bottom:1.75rem;font-weight:300}
+      .section-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.75rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
+      .section-sub {
+        font-size: 0.9rem;
+        color: var(--ink2);
+        margin-bottom: 1.75rem;
+        font-weight: 300;
+      }
 
-.rules-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:4rem}
-.rc{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rl);padding:1.2rem 1.35rem;transition:border-color .2s}
-.rc:hover{border-color:var(--border2)}
-.rc-num{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.3rem}
-.rc-name{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:.3rem}
-.rc-desc{font-size:.8rem;color:var(--ink2);line-height:1.58}
+      .rules-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.85rem;
+        margin-bottom: 4rem;
+      }
+      .rc {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--rl);
+        padding: 1.2rem 1.35rem;
+        transition: border-color 0.2s;
+      }
+      .rc:hover {
+        border-color: var(--border2);
+      }
+      .rc-num {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink3);
+        margin-bottom: 0.3rem;
+      }
+      .rc-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 0.3rem;
+      }
+      .rc-desc {
+        font-size: 0.8rem;
+        color: var(--ink2);
+        line-height: 1.58;
+      }
 
-.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.25rem;margin-bottom:4rem}
-.tc{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rl);padding:1.5rem 1rem;text-align:center}
-.tc-av{width:52px;height:52px;border-radius:50%;margin:0 auto .9rem;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.2rem;color:#fff}
-.av-b{background:var(--blue)} .av-p{background:var(--pink-dark)}
-.av-g{background:var(--green)} .av-y{background:var(--yellow-dark)}
-.tc-name{font-size:.88rem;font-weight:600;color:var(--ink)}
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 1.25rem;
+        margin-bottom: 4rem;
+      }
+      .tc {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--rl);
+        padding: 1.5rem 1rem;
+        text-align: center;
+      }
+      .tc-av {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        margin: 0 auto 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "DM Serif Display", serif;
+        font-size: 1.2rem;
+        color: #fff;
+      }
+      .av-b {
+        background: var(--blue);
+      }
+      .av-p {
+        background: var(--pink-dark);
+      }
+      .av-g {
+        background: var(--green);
+      }
+      .av-y {
+        background: var(--yellow-dark);
+      }
+      .tc-name {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--ink);
+      }
 
-footer{border-top:1.5px solid var(--border);padding:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-.footer-logo{display:flex;align-items:center;gap:8px}
-.footer-logo img{height:28px}
-.footer-logo-name{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--ink)}
-.footer-names{font-size:.8rem;color:var(--ink3);text-align:right;line-height:1.8}
+      footer {
+        border-top: 1.5px solid var(--border);
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .footer-logo img {
+        height: 28px;
+      }
+      .footer-logo-name {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.1rem;
+        color: var(--ink);
+      }
+      .footer-names {
+        font-size: 0.8rem;
+        color: var(--ink3);
+        text-align: right;
+        line-height: 1.8;
+      }
 
-/* ANALYSIS PAGE */
-.analysis-wrap{max-width:720px;margin:0 auto;padding:3.5rem 2rem 6rem}
-.analysis-wrap h1{font-family:'DM Serif Display',serif;font-size:2.25rem;letter-spacing:-.03em;margin-bottom:.4rem}
-.page-sub{font-size:.9rem;color:var(--ink2);margin-bottom:2rem;font-weight:300}
+      /* ANALYSIS PAGE */
+      .analysis-wrap {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 3.5rem 2rem 6rem;
+      }
+      .analysis-wrap h1 {
+        font-family: "DM Serif Display", serif;
+        font-size: 2.25rem;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.4rem;
+      }
+      .page-sub {
+        font-size: 0.9rem;
+        color: var(--ink2);
+        margin-bottom: 2rem;
+        font-weight: 300;
+      }
 
-.input-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rxl);padding:1.75rem;box-shadow:var(--shadow);margin-bottom:2rem}
-.input-lbl{font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--ink3);text-transform:uppercase;margin-bottom:.75rem}
-.input-row{display:flex;gap:9px}
-#wordInput{flex:1;font-family:'DM Sans',sans-serif;font-size:1.05rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 15px;outline:none;transition:border-color .2s,background .2s}
-#wordInput::placeholder{color:var(--ink3)}
-#wordInput:focus{border-color:var(--blue);background:#fff}
-#analyzeBtn{background:var(--blue);color:#fff;border:none;border-radius:var(--r);padding:12px 24px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s;white-space:nowrap}
-#analyzeBtn:hover{opacity:.85}
-#analyzeBtn:disabled{opacity:.38;cursor:not-allowed}
-.err{font-size:.82rem;color:var(--pink-dark);margin-top:.6rem;display:none}
-.err.show{display:block}
+      .input-card {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--rxl);
+        padding: 1.75rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+      }
+      .input-lbl {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--ink3);
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+      }
+      .input-row {
+        display: flex;
+        gap: 9px;
+      }
+      #wordInput {
+        flex: 1;
+        font-family: "DM Sans", sans-serif;
+        font-size: 1.05rem;
+        color: var(--ink);
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        border-radius: var(--r);
+        padding: 12px 15px;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      #wordInput::placeholder {
+        color: var(--ink3);
+      }
+      #wordInput:focus {
+        border-color: var(--blue);
+        background: #fff;
+      }
+      #analyzeBtn {
+        background: var(--blue);
+        color: #fff;
+        border: none;
+        border-radius: var(--r);
+        padding: 12px 24px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+      }
+      #analyzeBtn:hover {
+        opacity: 0.85;
+      }
+      #analyzeBtn:disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+      }
+      .err {
+        font-size: 0.82rem;
+        color: var(--pink-dark);
+        margin-top: 0.6rem;
+        display: none;
+      }
+      .err.show {
+        display: block;
+      }
 
-/* Loading */
-.loading{display:none;text-align:center;padding:3rem 0}
-.loading.show{display:block}
-.spinner{width:34px;height:34px;border:2.5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 1rem}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-word{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--ink);margin-bottom:.25rem}
-.loading-sub{font-size:.82rem;color:var(--ink2)}
+      /* Loading */
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 3rem 0;
+      }
+      .loading.show {
+        display: block;
+      }
+      .spinner {
+        width: 34px;
+        height: 34px;
+        border: 2.5px solid var(--border);
+        border-top-color: var(--blue);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin: 0 auto 1rem;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .loading-word {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.5rem;
+        color: var(--ink);
+        margin-bottom: 0.25rem;
+      }
+      .loading-sub {
+        font-size: 0.82rem;
+        color: var(--ink2);
+      }
 
-/* Results */
-#results{display:none}
-#results.show{display:block;animation:up .35s ease both}
+      /* Results */
+      #results {
+        display: none;
+      }
+      #results.show {
+        display: block;
+        animation: up 0.35s ease both;
+      }
 
-/* Score summary */
-.score-summary{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rxl);padding:2rem 2.25rem;margin-bottom:1.75rem;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
-.ss-label{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
-.ss-word{font-family:'JetBrains Mono',monospace;font-size:1.9rem;font-weight:500;color:var(--ink);letter-spacing:-.02em}
-.ss-right{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
-.ss-score-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
-.ss-score{font-family:'DM Serif Display',serif;font-size:3.25rem;line-height:1;color:var(--blue)}
+      /* Score summary */
+      .score-summary {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--rxl);
+        padding: 2rem 2.25rem;
+        margin-bottom: 1.75rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+      }
+      .ss-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink3);
+        margin-bottom: 6px;
+      }
+      .ss-word {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1.9rem;
+        font-weight: 500;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+      }
+      .ss-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .ss-score-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink3);
+        margin-bottom: 6px;
+      }
+      .ss-score {
+        font-family: "DM Serif Display", serif;
+        font-size: 3.25rem;
+        line-height: 1;
+        color: var(--blue);
+      }
 
-/* Breakdown */
-.bd-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
-.bd-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
-.bd-counts{display:flex;gap:7px}
-.bc{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:100px}
-.bc-t{background:var(--green-light);color:var(--green-dark)}
-.bc-n{background:var(--surface2);color:var(--ink2)}
+      /* Breakdown */
+      .bd-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.9rem;
+      }
+      .bd-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink3);
+      }
+      .bd-counts {
+        display: flex;
+        gap: 7px;
+      }
+      .bc {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 100px;
+      }
+      .bc-t {
+        background: var(--green-light);
+        color: var(--green-dark);
+      }
+      .bc-n {
+        background: var(--surface2);
+        color: var(--ink2);
+      }
 
-/* Rule rows */
-.rules-results{display:flex;flex-direction:column;gap:8px}
-.rr{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.35rem;display:grid;grid-template-columns:28px 1fr auto;align-items:start;gap:12px;transition:border-color .2s}
-.rr:hover{border-color:var(--border2)}
-.rr.trig{border-left:3px solid var(--green)}
-.rr.no-trig{border-left:3px solid var(--border);opacity:.62}
-.rr-icon{font-size:.9rem;margin-top:2px;line-height:1}
-.rr-name{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:2px}
-.rr-desc{font-size:.8rem;color:var(--ink2);line-height:1.55}
-.rr-detail{font-size:.73rem;color:var(--ink3);margin-top:4px;font-family:'JetBrains Mono',monospace}
-.rr-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-top:1px}
-.status-badge{font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
-.status-badge.yes{background:var(--green-light);color:var(--green-dark)}
-.status-badge.no{background:var(--surface2);color:var(--ink3)}
-.rr-score{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--blue);font-weight:500}
+      /* Rule rows */
+      .rules-results {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .rr {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--rl);
+        padding: 1.1rem 1.35rem;
+        display: grid;
+        grid-template-columns: 28px 1fr auto;
+        align-items: start;
+        gap: 12px;
+        transition: border-color 0.2s;
+      }
+      .rr:hover {
+        border-color: var(--border2);
+      }
+      .rr.trig {
+        border-left: 3px solid var(--green);
+      }
+      .rr.no-trig {
+        border-left: 3px solid var(--border);
+        opacity: 0.62;
+      }
+      .rr-icon {
+        font-size: 0.9rem;
+        margin-top: 2px;
+        line-height: 1;
+      }
+      .rr-name {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .rr-desc {
+        font-size: 0.8rem;
+        color: var(--ink2);
+        line-height: 1.55;
+      }
+      .rr-detail {
+        font-size: 0.73rem;
+        color: var(--ink3);
+        margin-top: 4px;
+        font-family: "JetBrains Mono", monospace;
+      }
+      .rr-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+        padding-top: 1px;
+      }
+      .status-badge {
+        font-size: 0.66rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 100px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .status-badge.yes {
+        background: var(--green-light);
+        color: var(--green-dark);
+      }
+      .status-badge.no {
+        background: var(--surface2);
+        color: var(--ink3);
+      }
+      .rr-score {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--blue);
+        font-weight: 500;
+      }
 
-/* API error banner */
-.api-error{background:var(--pink-light);border:1.5px solid var(--pink);border-radius:var(--rl);padding:1.1rem 1.35rem;font-size:.875rem;color:var(--pink-dark);display:none;margin-bottom:1rem}
-.api-error.show{display:block}
+      /* API error banner */
+      .api-error {
+        background: var(--pink-light);
+        border: 1.5px solid var(--pink);
+        border-radius: var(--rl);
+        padding: 1.1rem 1.35rem;
+        font-size: 0.875rem;
+        color: var(--pink-dark);
+        display: none;
+        margin-bottom: 1rem;
+      }
+      .api-error.show {
+        display: block;
+      }
 
-/* Responsive */
-@media(max-width:740px){
-  .hero h1{font-size:2.5rem}
-  .about-grid{grid-template-columns:1fr}
-  .rules-grid{grid-template-columns:1fr 1fr}
-  .team-grid{grid-template-columns:1fr 1fr}
-  .score-summary{flex-direction:column;text-align:center}
-  .rr{grid-template-columns:28px 1fr;grid-template-rows:auto auto}
-  .rr-right{grid-column:2;flex-direction:row;align-items:center;gap:8px}
-  footer{flex-direction:column;align-items:flex-start}
-  .footer-names{text-align:left}
-}
-@media(max-width:480px){
-  .rules-grid{grid-template-columns:1fr}
-  .team-grid{grid-template-columns:1fr 1fr}
-}
-</style>
-</head>
-<body>
+      /* Responsive */
+      /* =========================================
+   RESPONSIVE
+========================================= */
 
-<!-- NAV -->
-<nav>
-  <div class="nav-inner">
-    <a class="nav-logo" onclick="showPage('home')" href="javascript:void(0)">
-      <img src="Lexia.svg" alt="Lexia">
-      <span class="nav-logo-name">Lexia</span>
-    </a>
-    <div class="nav-links">
-      <span class="nav-link active" id="nav-home" onclick="showPage('home')">Home</span>
-      <span class="nav-link" id="nav-analysis" onclick="showPage('analysis')">Analyzer</span>
-      <button class="nav-cta" onclick="showPage('analysis')">Try It →</button>
-    </div>
-  </div>
-</nav>
+      /* 📱 Tablets */
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.2rem;
+        }
 
+        .analysis-wrap h1 {
+          font-size: 1.8rem;
+        }
 
-<!-- ══════════ HOME PAGE ══════════ -->
-<div class="page active" id="page-home">
-<div class="home-wrap">
+        .hero-logo {
+          width: 90px;
+          height: 90px;
+        }
 
-  <section class="hero">
-    <img class="hero-logo" src="Lexia.svg" alt="Lexia">
-    <h1>Understand word<br><em>difficulty</em> instantly.</h1>
-    <p>Lexia uses a transparent, rule-based system to score how hard any English word is to read — built to support research in dyslexia and literacy.</p>
-    <button class="btn-primary" onclick="showPage('analysis')">Analyze a word →</button>
-  </section>
+        .nav-logo img {
+          height: 40px;
+        }
+      }
 
-  <div class="strip"></div>
+      /* 📱 Small screens */
+      @media (max-width: 740px) {
+        .about-grid {
+          grid-template-columns: 1fr;
+        }
 
-  <div class="about-grid">
-    <div class="ac blue"><h3>Literacy Research</h3><p>Reproducible difficulty scores to support academic work in reading comprehension and vocabulary acquisition.</p></div>
-    <div class="ac pink"><h3>Fully Transparent</h3><p>Every score is explained. Each rule is named and inspectable — no black-box logic.</p></div>
-    <div class="ac green"><h3>Modular Rules Engine</h3><p>Rules can be added, removed, or changed independently without touching the interface.</p></div>
-    <div class="ac yellow"><h3>Dyslexia-Aware</h3><p>Rules are grounded in phonological complexity and irregular spelling patterns that affect dyslexic readers.</p></div>
-  </div>
+        .rules-grid {
+          grid-template-columns: 1fr 1fr;
+        }
 
-  <div class="section-title">Scoring rules</div>
-  <div class="section-sub">16 independent rules are applied to every word. Each contributes a numeric score to the total.</div>
-  <div class="rules-grid" id="homeRulesGrid"></div>
+        .team-grid {
+          grid-template-columns: 1fr 1fr;
+        }
 
-  <div class="section-title">The team</div>
-  <div class="team-grid">
-    <div class="tc"><div class="tc-av av-b">NA</div><div class="tc-name">Norah Alshamsan</div></div>
-    <div class="tc"><div class="tc-av av-p">DA</div><div class="tc-name">Dana Alsalami</div></div>
-    <div class="tc"><div class="tc-av av-g">ZI</div><div class="tc-name">Zuhd Ibrahim</div></div>
-    <div class="tc"><div class="tc-av av-y">LA</div><div class="tc-name">Layan Alhowaimel</div></div>
-  </div>
+        .score-summary {
+          flex-direction: column;
+          text-align: center;
+        }
 
-</div>
-<footer>
-  <div class="footer-logo">
-    <img src="Lexia.svg" alt="Lexia">
-    <span class="footer-logo-name">Lexia</span>
-  </div>
-  <div class="footer-names">Norah Alshamsan · Dana Alsalami · Zuhd Ibrahim · Layan Alhowaimel</div>
-</footer>
-</div>
+        .rr {
+          grid-template-columns: 28px 1fr;
+          grid-template-rows: auto auto;
+        }
 
+        .rr-right {
+          grid-column: 2;
+          flex-direction: row;
+          align-items: center;
+          gap: 8px;
+        }
 
-<!-- ══════════ ANALYSIS PAGE ══════════ -->
-<div class="page" id="page-analysis">
-<div class="analysis-wrap">
-  <h1>Word Analyzer</h1>
-  <p class="page-sub">Enter any English word to receive a full difficulty breakdown across all 16 rules.</p>
+        footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
 
-  <div class="input-card">
-    <div class="input-lbl">Enter a word</div>
-    <div class="input-row">
-      <input id="wordInput" type="text" placeholder="Type a word and press Analyze…" maxlength="80" autocomplete="off" autocorrect="off" spellcheck="false">
-      <button id="analyzeBtn" onclick="runAnalysis()">Analyze</button>
-    </div>
-    <p class="err" id="errMsg">Please enter a word.</p>
-  </div>
+        .footer-names {
+          text-align: left;
+        }
+      }
 
-  <div class="api-error" id="apiError">
-    ⚠️ Could not reach the Python backend. Make sure <code>app.py</code> is running on <strong>localhost:5000</strong>.
-  </div>
+      /* 📱 Phones */
+      @media (max-width: 600px) {
+        .input-row {
+          flex-direction: column;
+        }
 
-  <div class="loading" id="loadingState">
-    <div class="spinner"></div>
-    <div class="loading-word" id="loadingWordDisp"></div>
-    <div class="loading-sub">Running Python rules…</div>
-  </div>
+        #analyzeBtn {
+          width: 100%;
+        }
+      }
 
-  <div id="results">
-    <div class="score-summary">
-      <div>
-        <div class="ss-label">Word analyzed</div>
-        <div class="ss-word" id="ssWord"></div>
+      /* 📱 Very small screens */
+      @media (max-width: 480px) {
+        .rules-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .team-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .hero-logo {
+          width: 70px;
+          height: 70px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <div class="nav-inner">
+        <a
+          class="nav-logo"
+          onclick="showPage('home')"
+          href="javascript:void(0)"
+        >
+          <img src="Lexia.svg" alt="Lexia" />
+          <span class="nav-logo-name">Lexia</span>
+        </a>
+        <div class="nav-links">
+          <span class="nav-link active" id="nav-home" onclick="showPage('home')"
+            >Home</span
+          >
+          <span
+            class="nav-link"
+            id="nav-analysis"
+            onclick="showPage('analysis')"
+            >Analyzer</span
+          >
+          <button class="nav-cta" onclick="showPage('analysis')">
+            Try It →
+          </button>
+        </div>
       </div>
-      <div class="ss-right">
-  <div class="ss-score-label">Total score</div>
-  <div class="ss-score" id="ssScore"></div>
-  <div id="ssDifficulty" style="
-      font-size:0.95rem;
-      margin-top:6px;
-      font-weight:700;
-      letter-spacing:0.05em;">
-  </div>
-</div>
+    </nav>
+
+    <!-- ══════════ HOME PAGE ══════════ -->
+    <div class="page active" id="page-home">
+      <div class="home-wrap">
+        <section class="hero">
+          <img class="hero-logo" src="Lexia.svg" alt="Lexia" />
+          <h1>Understand word<br /><em>difficulty</em> instantly.</h1>
+          <p>
+            Lexia uses a transparent, rule-based system to score how hard any
+            English word is to read — built to support research in dyslexia and
+            literacy.
+          </p>
+          <button class="btn-primary" onclick="showPage('analysis')">
+            Analyze a word →
+          </button>
+        </section>
+
+        <div class="strip"></div>
+
+        <div class="about-grid">
+          <div class="ac blue">
+            <h3>Literacy Research</h3>
+            <p>
+              Reproducible difficulty scores to support academic work in reading
+              comprehension and vocabulary acquisition.
+            </p>
+          </div>
+          <div class="ac pink">
+            <h3>Fully Transparent</h3>
+            <p>
+              Every score is explained. Each rule is named and inspectable — no
+              black-box logic.
+            </p>
+          </div>
+          <div class="ac green">
+            <h3>Modular Rules Engine</h3>
+            <p>
+              Rules can be added, removed, or changed independently without
+              touching the interface.
+            </p>
+          </div>
+          <div class="ac yellow">
+            <h3>Dyslexia-Aware</h3>
+            <p>
+              Rules are grounded in phonological complexity and irregular
+              spelling patterns that affect dyslexic readers.
+            </p>
+          </div>
+        </div>
+
+        <div class="section-title">Scoring rules</div>
+        <div class="section-sub">
+          16 independent rules are applied to every word. Each contributes a
+          numeric score to the total.
+        </div>
+        <div class="rules-grid" id="homeRulesGrid"></div>
+
+        <div class="section-title">The team</div>
+        <div class="team-grid">
+          <div class="tc">
+            <div class="tc-av av-b">NA</div>
+            <div class="tc-name">Norah Alshamsan</div>
+          </div>
+          <div class="tc">
+            <div class="tc-av av-p">DA</div>
+            <div class="tc-name">Dana Alsalami</div>
+          </div>
+          <div class="tc">
+            <div class="tc-av av-g">ZI</div>
+            <div class="tc-name">Zuhd Ibrahim</div>
+          </div>
+          <div class="tc">
+            <div class="tc-av av-y">LA</div>
+            <div class="tc-name">Layan Alhowaimel</div>
+          </div>
+        </div>
+      </div>
+      <footer>
+        <div class="footer-logo">
+          <img src="Lexia.svg" alt="Lexia" />
+          <span class="footer-logo-name">Lexia</span>
+        </div>
+        <div class="footer-names">
+          Norah Alshamsan · Dana Alsalami · Zuhd Ibrahim · Layan Alhowaimel
+        </div>
+      </footer>
     </div>
 
-    <div class="bd-header">
-      <div class="bd-title">Rule breakdown</div>
-      <div class="bd-counts">
-        <span class="bc bc-t" id="bdT"></span>
-        <span class="bc bc-n" id="bdN"></span>
+    <!-- ══════════ ANALYSIS PAGE ══════════ -->
+    <div class="page" id="page-analysis">
+      <div class="analysis-wrap">
+        <h1>Word Analyzer</h1>
+        <p class="page-sub">
+          Enter any English word to receive a full difficulty breakdown across
+          all 16 rules.
+        </p>
+
+        <div class="input-card">
+          <div class="input-lbl">Enter a word</div>
+          <div class="input-row">
+            <input
+              id="wordInput"
+              type="text"
+              placeholder="Type a word and press Analyze…"
+              maxlength="80"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+            />
+            <button id="analyzeBtn" onclick="runAnalysis()">Analyze</button>
+          </div>
+          <p class="err" id="errMsg">Please enter a word.</p>
+        </div>
+
+        <div class="api-error" id="apiError">
+          ⚠️ Could not reach the Python backend. Make sure
+          <code>app.py</code> is running on <strong>localhost:5000</strong>.
+        </div>
+
+        <div class="loading" id="loadingState">
+          <div class="spinner"></div>
+          <div class="loading-word" id="loadingWordDisp"></div>
+          <div class="loading-sub">Running Python rules…</div>
+        </div>
+
+        <div id="results">
+          <div class="score-summary">
+            <div>
+              <div class="ss-label">Word analyzed</div>
+              <div class="ss-word" id="ssWord"></div>
+            </div>
+            <div class="ss-right">
+              <div class="ss-score-label">Total score</div>
+              <div class="ss-score" id="ssScore"></div>
+              <div
+                id="ssDifficulty"
+                style="
+                  font-size: 0.95rem;
+                  margin-top: 6px;
+                  font-weight: 700;
+                  letter-spacing: 0.05em;
+                "
+              ></div>
+            </div>
+          </div>
+
+          <div class="bd-header">
+            <div class="bd-title">Rule breakdown</div>
+            <div class="bd-counts">
+              <span class="bc bc-t" id="bdT"></span>
+              <span class="bc bc-n" id="bdN"></span>
+            </div>
+          </div>
+          <div class="rules-results" id="rulesList"></div>
+        </div>
       </div>
     </div>
-    <div class="rules-results" id="rulesList"></div>
-  </div>
-</div>
-</div>
 
+    <script>
+      // ── Rule metadata for the home page display ──
+      // (descriptions only — actual scoring comes from the Python backend)
+      const RULE_META = [
+        {
+          name: "Word Length",
+          desc: "Score 0 if ≤ 3 chars, 1 if 4–6 chars, 2 if ≥ 7 chars.",
+        },
+        {
+          name: "Visually Confusable Letters",
+          desc: "Counts letters from visually similar pairs: b/d, p/q, m/n, i/l, u/n, etc.",
+        },
+        {
+          name: "Special Letter Rules",
+          desc: "Detects soft-C (ce/ci/cy), soft-G (ge/gi/gy), and intervocalic-S.",
+        },
+        {
+          name: "Diphthongs & Semi-Vowels",
+          desc: "Counts aw/ew/ow diphthongs and mid-word Y used as a semi-vowel.",
+        },
+        {
+          name: "Vowel Teams",
+          desc: "Detects vowel digraphs: oi, ea, ou, ie, ue, oe.",
+        },
+        {
+          name: "Magic-E Pattern",
+          desc: "Detects vowel–consonant–e at the end of a word (e.g. cake, kite).",
+        },
+        {
+          name: "Digraphs",
+          desc: "Two-letter graphemes: sh, ch, th, wh, ph, tch, ck, dg, sc.",
+        },
+        {
+          name: "Trigraphs",
+          desc: "Three-letter graphemes: air, are, dge, ear, eau, eer, igh, oor, ore, our, ure, etc.",
+        },
+        {
+          name: "Quadgraphs",
+          desc: "Four-letter graphemes: augh, eigh, ngue, ough.",
+        },
+        {
+          name: "Syllable Count",
+          desc: "Score 0 for 1 syllable, 1 for 2–3, 2 for 4+ (CMU Pronouncing Dictionary).",
+        },
+        {
+          name: "Silent Letter Patterns",
+          desc: "Detects ps, kn, wr, gn, mb, gh at the start or end of a word.",
+        },
+        { name: "Letter X", desc: "Counts occurrences of the letter X." },
+        {
+          name: "Double Letters",
+          desc: "Counts consecutive identical letter pairs (ll, tt, ss, etc.).",
+        },
+        {
+          name: "Affixes",
+          desc: "Score +1 for a known prefix, +1 for a known suffix (max 2).",
+        },
+        {
+          name: "Multi-Word",
+          desc: "Score 2 if the input contains a space, 0 otherwise.",
+        },
+        {
+          name: "Word Frequency",
+          desc: "Score 0 very common, 1 moderately common, 2 rare — powered by real corpus data (wordfreq).",
+        },
+      ];
 
-<script>
-// ── Rule metadata for the home page display ──
-// (descriptions only — actual scoring comes from the Python backend)
-const RULE_META = [
-  { name: "Word Length",               desc: "Score 0 if ≤ 3 chars, 1 if 4–6 chars, 2 if ≥ 7 chars." },
-  { name: "Visually Confusable Letters", desc: "Counts letters from visually similar pairs: b/d, p/q, m/n, i/l, u/n, etc." },
-  { name: "Special Letter Rules",      desc: "Detects soft-C (ce/ci/cy), soft-G (ge/gi/gy), and intervocalic-S." },
-  { name: "Diphthongs & Semi-Vowels",  desc: "Counts aw/ew/ow diphthongs and mid-word Y used as a semi-vowel." },
-  { name: "Vowel Teams",               desc: "Detects vowel digraphs: oi, ea, ou, ie, ue, oe." },
-  { name: "Magic-E Pattern",           desc: "Detects vowel–consonant–e at the end of a word (e.g. cake, kite)." },
-  { name: "Digraphs",                  desc: "Two-letter graphemes: sh, ch, th, wh, ph, tch, ck, dg, sc." },
-  { name: "Trigraphs",                 desc: "Three-letter graphemes: air, are, dge, ear, eau, eer, igh, oor, ore, our, ure, etc." },
-  { name: "Quadgraphs",                desc: "Four-letter graphemes: augh, eigh, ngue, ough." },
-  { name: "Syllable Count",            desc: "Score 0 for 1 syllable, 1 for 2–3, 2 for 4+ (CMU Pronouncing Dictionary)." },
-  { name: "Silent Letter Patterns",    desc: "Detects ps, kn, wr, gn, mb, gh at the start or end of a word." },
-  { name: "Letter X",                  desc: "Counts occurrences of the letter X." },
-  { name: "Double Letters",            desc: "Counts consecutive identical letter pairs (ll, tt, ss, etc.)." },
-  { name: "Affixes",                   desc: "Score +1 for a known prefix, +1 for a known suffix (max 2)." },
-  { name: "Multi-Word",                desc: "Score 2 if the input contains a space, 0 otherwise." },
-  { name: "Word Frequency",            desc: "Score 0 very common, 1 moderately common, 2 rare — powered by real corpus data (wordfreq)." },
-];
-
-// ── Render rules on home page ──
-function renderHomeRules() {
-  const el = document.getElementById('homeRulesGrid');
-  if (!el) return;
-  el.innerHTML = RULE_META.map((r, i) => `
+      // ── Render rules on home page ──
+      function renderHomeRules() {
+        const el = document.getElementById("homeRulesGrid");
+        if (!el) return;
+        el.innerHTML = RULE_META.map(
+          (r, i) => `
     <div class="rc">
-      <div class="rc-num">Rule ${String(i+1).padStart(2,'0')}</div>
+      <div class="rc-num">Rule ${String(i + 1).padStart(2, "0")}</div>
       <div class="rc-name">${r.name}</div>
       <div class="rc-desc">${r.desc}</div>
-    </div>`).join('');
-}
+    </div>`,
+        ).join("");
+      }
 
-// ── Call the Flask backend ──
-async function runAnalysis() {
-  const raw = document.getElementById('wordInput').value.trim();
-  const errEl = document.getElementById('errMsg');
-  const apiErrEl = document.getElementById('apiError');
+      // ── Call the Flask backend ──
+      async function runAnalysis() {
+        const raw = document.getElementById("wordInput").value.trim();
+        const errEl = document.getElementById("errMsg");
+        const apiErrEl = document.getElementById("apiError");
 
-  if (!raw) { errEl.classList.add('show'); return; }
-  errEl.classList.remove('show');
-  apiErrEl.classList.remove('show');
+        if (!raw) {
+          errEl.classList.add("show");
+          return;
+        }
+        errEl.classList.remove("show");
+        apiErrEl.classList.remove("show");
 
-  document.getElementById('loadingWordDisp').textContent = raw;
-  document.getElementById('loadingState').classList.add('show');
-  document.getElementById('results').classList.remove('show');
-  document.getElementById('analyzeBtn').disabled = true;
+        document.getElementById("loadingWordDisp").textContent = raw;
+        document.getElementById("loadingState").classList.add("show");
+        document.getElementById("results").classList.remove("show");
+        document.getElementById("analyzeBtn").disabled = true;
 
-  try {
-    const response = await fetch('/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ word: raw })
-    });
+        try {
+          const response = await fetch("/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ word: raw }),
+          });
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error || 'Server error');
-    }
+          if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error || "Server error");
+          }
 
-    const data = await response.json();
-    renderResults(data);
+          const data = await response.json();
+          renderResults(data);
+        } catch (e) {
+          apiErrEl.classList.add("show");
+          document.getElementById("loadingState").classList.remove("show");
+        } finally {
+          document.getElementById("analyzeBtn").disabled = false;
+          document.getElementById("loadingState").classList.remove("show");
+        }
+      }
 
-  } catch (e) {
-    apiErrEl.classList.add('show');
-    document.getElementById('loadingState').classList.remove('show');
-  } finally {
-    document.getElementById('analyzeBtn').disabled = false;
-    document.getElementById('loadingState').classList.remove('show');
-  }
-}
+      function renderResults(data) {
+        const rules = data.rules;
+        const triggered = rules.filter((r) => r.score > 0);
+        const notTriggered = rules.filter((r) => r.score === 0);
 
-function renderResults(data) {
-  const rules = data.rules;
-  const triggered = rules.filter(r => r.score > 0);
-  const notTriggered = rules.filter(r => r.score === 0);
+        document.getElementById("ssWord").textContent =
+          data.word.charAt(0).toUpperCase() + data.word.slice(1);
+        document.getElementById("ssScore").textContent = data.total_score;
 
-  document.getElementById('ssWord').textContent = data.word.charAt(0).toUpperCase() + data.word.slice(1);
-  document.getElementById('ssScore').textContent = data.total_score;
+        // 🔥 عرض مستوى الصعوبة
+        const diffEl = document.getElementById("ssDifficulty");
+        diffEl.textContent = data.difficulty;
 
-// 🔥 عرض مستوى الصعوبة
-const diffEl = document.getElementById('ssDifficulty');
-diffEl.textContent = data.difficulty;
+        // 🎨 ألوان حسب الصعوبة
+        if (data.difficulty === "Easy") {
+          diffEl.style.color = "#2a6b52"; // أخضر
+        } else if (data.difficulty === "Medium") {
+          diffEl.style.color = "#8a6a00"; // أصفر
+        } else {
+          diffEl.style.color = "#a84e48"; // أحمر
+        }
+        document.getElementById("bdT").textContent =
+          `✓ ${triggered.length} rules scored`;
+        document.getElementById("bdN").textContent =
+          `✗ ${notTriggered.length} rules at 0`;
 
-// 🎨 ألوان حسب الصعوبة
-if (data.difficulty === "Easy") {
-  diffEl.style.color = "#2a6b52";   // أخضر
-} 
-else if (data.difficulty === "Medium") {
-  diffEl.style.color = "#8a6a00";   // أصفر
-} 
-else {
-  diffEl.style.color = "#a84e48";   // أحمر
-}
-  document.getElementById('bdT').textContent = `✓ ${triggered.length} rules scored`;
-  document.getElementById('bdN').textContent = `✗ ${notTriggered.length} rules at 0`;
-
-  document.getElementById('rulesList').innerHTML = [...triggered, ...notTriggered].map(r => `
-    <div class="rr ${r.score > 0 ? 'trig' : 'no-trig'}">
-      <div class="rr-icon">${r.score > 0 ? '✅' : '❌'}</div>
+        document.getElementById("rulesList").innerHTML = [
+          ...triggered,
+          ...notTriggered,
+        ]
+          .map(
+            (r) => `
+    <div class="rr ${r.score > 0 ? "trig" : "no-trig"}">
+      <div class="rr-icon">${r.score > 0 ? "✅" : "❌"}</div>
       <div>
         <div class="rr-name">${r.rule}</div>
         <div class="rr-desc">${r.desc}</div>
         <div class="rr-detail">${r.detail}</div>
       </div>
       <div class="rr-right">
-        <span class="status-badge ${r.score > 0 ? 'yes' : 'no'}">${r.score > 0 ? 'Triggered' : 'Not triggered'}</span>
+        <span class="status-badge ${r.score > 0 ? "yes" : "no"}">${r.score > 0 ? "Triggered" : "Not triggered"}</span>
         <span class="rr-score">Score: ${r.score}</span>
       </div>
-    </div>`).join('');
+    </div>`,
+          )
+          .join("");
 
-  const el = document.getElementById('results');
-  el.classList.add('show');
-  el.style.animation = 'none';
-  el.offsetHeight;
-  el.style.animation = '';
-}
+        const el = document.getElementById("results");
+        el.classList.add("show");
+        el.style.animation = "none";
+        el.offsetHeight;
+        el.style.animation = "";
+      }
 
-// ── Page router ──
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  document.getElementById('page-' + p).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
-  document.getElementById('nav-' + p).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+      // ── Page router ──
+      function showPage(p) {
+        document
+          .querySelectorAll(".page")
+          .forEach((x) => x.classList.remove("active"));
+        document.getElementById("page-" + p).classList.add("active");
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((x) => x.classList.remove("active"));
+        document.getElementById("nav-" + p).classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
 
-document.addEventListener('DOMContentLoaded', () => {
-  renderHomeRules();
-  document.getElementById('wordInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') runAnalysis();
-  });
-});
-</script>
-</body>
+      document.addEventListener("DOMContentLoaded", () => {
+        renderHomeRules();
+        document
+          .getElementById("wordInput")
+          .addEventListener("keydown", (e) => {
+            if (e.key === "Enter") runAnalysis();
+          });
+      });
+    </script>
+  </body>
 </html>
