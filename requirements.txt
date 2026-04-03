@@ -1,0 +1,5 @@
+Flask
+flask-cors
+pronouncing
+wordfreq
+gunicorn
