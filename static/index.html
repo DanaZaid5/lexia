@@ -76,10 +76,10 @@
         width: 120px;
         height: 120px;
       }
-      .nav-logo img {
-        height: 48px;
-        width: auto;
-      }
+      .nav-logo img{
+  height:60px !important;
+  width:auto;
+}
       .nav-logo-name {
         font-family: "DM Serif Display", serif;
         font-size: 1.4rem;
@@ -154,11 +154,10 @@
         padding: 5rem 0 4rem;
         text-align: center;
       }
-      .hero-logo {
-        margin: 0 auto 2rem;
-        width: 80px;
-        height: 80px;
-      }
+      .hero-logo{
+  width:140px !important;
+  height:140px !important;
+}
       .hero h1 {
         font-family: "DM Serif Display", serif;
         font-size: 3.25rem;
@@ -679,93 +678,120 @@
    RESPONSIVE
 ========================================= */
 
-      /* 📱 Tablets */
-      @media (max-width: 768px) {
-        .hero h1 {
-          font-size: 2.2rem;
-        }
+     /* =========================================
+   RESPONSIVE DESIGN
+========================================= */
 
-        .analysis-wrap h1 {
-          font-size: 1.8rem;
-        }
+/* 💻 Desktop (الحجم الأساسي) */
+.nav-logo img{
+  height:60px;
+  width:auto;
+}
 
-        .hero-logo {
-          width: 90px;
-          height: 90px;
-        }
+.hero-logo{
+  width:140px;
+  height:140px;
+}
 
-        .nav-logo img {
-          height: 40px;
-        }
-      }
 
-      /* 📱 Small screens */
-      @media (max-width: 740px) {
-        .about-grid {
-          grid-template-columns: 1fr;
-        }
+/* 📱 Tablets */
+@media (max-width: 768px){
 
-        .rules-grid {
-          grid-template-columns: 1fr 1fr;
-        }
+  .hero h1{
+    font-size:2.2rem;
+  }
 
-        .team-grid {
-          grid-template-columns: 1fr 1fr;
-        }
+  .analysis-wrap h1{
+    font-size:1.8rem;
+  }
 
-        .score-summary {
-          flex-direction: column;
-          text-align: center;
-        }
+  .hero-logo{
+    width:100px;
+    height:100px;
+  }
 
-        .rr {
-          grid-template-columns: 28px 1fr;
-          grid-template-rows: auto auto;
-        }
+  .nav-logo img{
+    height:40px;
+  }
 
-        .rr-right {
-          grid-column: 2;
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-        }
+}
 
-        footer {
-          flex-direction: column;
-          align-items: flex-start;
-        }
 
-        .footer-names {
-          text-align: left;
-        }
-      }
+/* 📱 Small screens */
+@media (max-width: 740px){
 
-      /* 📱 Phones */
-      @media (max-width: 600px) {
-        .input-row {
-          flex-direction: column;
-        }
+  .about-grid{
+    grid-template-columns:1fr;
+  }
 
-        #analyzeBtn {
-          width: 100%;
-        }
-      }
+  .rules-grid{
+    grid-template-columns:1fr 1fr;
+  }
 
-      /* 📱 Very small screens */
-      @media (max-width: 480px) {
-        .rules-grid {
-          grid-template-columns: 1fr;
-        }
+  .team-grid{
+    grid-template-columns:1fr 1fr;
+  }
 
-        .team-grid {
-          grid-template-columns: 1fr 1fr;
-        }
+  .score-summary{
+    flex-direction:column;
+    text-align:center;
+  }
 
-        .hero-logo {
-          width: 70px;
-          height: 70px;
-        }
-      }
+  .rr{
+    grid-template-columns:28px 1fr;
+    grid-template-rows:auto auto;
+  }
+
+  .rr-right{
+    grid-column:2;
+    flex-direction:row;
+    align-items:center;
+    gap:8px;
+  }
+
+  footer{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .footer-names{
+    text-align:left;
+  }
+
+}
+
+
+/* 📱 Phones */
+@media (max-width: 600px){
+
+  .input-row{
+    flex-direction:column;
+  }
+
+  #analyzeBtn{
+    width:100%;
+  }
+
+}
+
+
+/* 📱 Very small screens */
+@media (max-width: 480px){
+
+  .rules-grid{
+    grid-template-columns:1fr;
+  }
+
+  .team-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .hero-logo{
+    width:70px;
+    height:70px;
+  }
+
+}
     </style>
   </head>
   <body>
