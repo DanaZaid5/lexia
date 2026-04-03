@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import pronouncing
+#import pronouncing
 import os
 
 # wordfreq for real corpus-based frequency scores
@@ -85,7 +85,7 @@ def quadgraphs_rule(word):
     return {"rule": "Quadgraphs", "score": min(score, 2)}
 
 def multi_syllable_rule(word):
-    phones = pronouncing.phones_for_word(word)
+  return {"rule": "Syllables", "score": 1}
     if phones:
         s = pronouncing.syllable_count(phones[0])
         if s == 1:
