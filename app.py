@@ -212,18 +212,38 @@ def quadgraphs_rule(word):
     }
 
 
-import pronouncing
+try:
+    import pronouncing
+    PRONOUNCING_AVAILABLE = True
+except:
+    PRONOUNCING_AVAILABLE = False
 
 def multi_syllable_rule(word):
-    phones = pronouncing.phones_for_word(word)
     syllables = 1
 
-    if phones:
-        syllables = pronouncing.syllable_count(phones[0])
+    if PRONOUNCING_AVAILABLE:
+        phones = pronouncing.phones_for_word(word)
+        if phones:
+            syllables = pronouncing.syllable_count(phones[0])
+    else:
+        # fallback simple estimation
+        vowels = "aeiouy"
+        count = 0
+        prev = False
+
+        for c in word.lower():
+            if c in vowels:
+                if not prev:
+                    count += 1
+                prev = True
+            else:
+                prev = False
+
+        syllables = max(count, 1)
 
     if syllables == 1:
         score = 0
-    elif 2<= syllables <= 3:
+    elif syllables <= 3:
         score = 1
     else:
         score = 2
@@ -232,7 +252,7 @@ def multi_syllable_rule(word):
         "rule": "Syllables",
         "score": score,
         "desc": f"{syllables} syllable(s)",
-        "detail": "Based on CMU dictionary"
+        "detail": "Estimated"
     }
 
 
