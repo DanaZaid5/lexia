@@ -53,7 +53,13 @@
         line-height: 1.65;
         min-height: 100vh;
       }
-
+      /* 🔥 LOGO FINAL FIX */
+      .hero-logo {
+        width: 280px;
+        height: auto;
+        display: block;
+        margin: 30px auto;
+      }
       /* NAV */
       nav {
         background: var(--surface);
@@ -71,15 +77,11 @@
         justify-content: space-between;
         height: 62px;
       }
-      .hero-logo {
-        margin: 0 auto 2rem;
-        width: 120px;
-        height: 120px;
+
+      .nav-logo img {
+        height: 60px !important;
+        width: auto;
       }
-      .nav-logo img{
-  height:60px !important;
-  width:auto;
-}
       .nav-logo-name {
         font-family: "DM Serif Display", serif;
         font-size: 1.4rem;
@@ -154,10 +156,7 @@
         padding: 5rem 0 4rem;
         text-align: center;
       }
-      .hero-logo{
-  width:140px !important;
-  height:140px !important;
-}
+
       .hero h1 {
         font-family: "DM Serif Display", serif;
         font-size: 3.25rem;
@@ -204,6 +203,13 @@
         );
         margin: 4rem 0;
         opacity: 0.5;
+      }
+      /* 🔥 LOGO FINAL FIX */
+      .hero-logo {
+        width: 280px;
+        height: auto;
+        display: block;
+        margin: 30px auto;
       }
 
       .about-grid {
@@ -678,120 +684,52 @@
    RESPONSIVE
 ========================================= */
 
-     /* =========================================
+      /* =========================================
    RESPONSIVE DESIGN
 ========================================= */
 
-/* 💻 Desktop (الحجم الأساسي) */
-.nav-logo img{
-  height:60px;
-  width:auto;
-}
+      /* 💻 Desktop (الحجم الأساسي) */
+      .nav-logo img {
+        height: 65px;
+        width: auto;
+      }
 
-.hero-logo{
-  width:140px;
-  height:140px;
-}
+      /* 📱 Tablets */
+      @media (max-width: 480px) {
+        .hero-logo {
+          width: 180px;
+        }
 
+        .analysis-wrap h1 {
+          font-size: 1.8rem;
+        }
 
-/* 📱 Tablets */
-@media (max-width: 768px){
+        .nav-logo img {
+          height: 45px;
+        }
+      }
 
-  .hero h1{
-    font-size:2.2rem;
-  }
+      /* 📱 Phones */
+      @media (max-width: 600px) {
+        .input-row {
+          flex-direction: column;
+        }
 
-  .analysis-wrap h1{
-    font-size:1.8rem;
-  }
+        #analyzeBtn {
+          width: 100%;
+        }
+      }
 
-  .hero-logo{
-    width:100px;
-    height:100px;
-  }
+      /* 📱 Very small screens */
+      @media (max-width: 480px) {
+        .rules-grid {
+          grid-template-columns: 1fr;
+        }
 
-  .nav-logo img{
-    height:40px;
-  }
-
-}
-
-
-/* 📱 Small screens */
-@media (max-width: 740px){
-
-  .about-grid{
-    grid-template-columns:1fr;
-  }
-
-  .rules-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .team-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .score-summary{
-    flex-direction:column;
-    text-align:center;
-  }
-
-  .rr{
-    grid-template-columns:28px 1fr;
-    grid-template-rows:auto auto;
-  }
-
-  .rr-right{
-    grid-column:2;
-    flex-direction:row;
-    align-items:center;
-    gap:8px;
-  }
-
-  footer{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .footer-names{
-    text-align:left;
-  }
-
-}
-
-
-/* 📱 Phones */
-@media (max-width: 600px){
-
-  .input-row{
-    flex-direction:column;
-  }
-
-  #analyzeBtn{
-    width:100%;
-  }
-
-}
-
-
-/* 📱 Very small screens */
-@media (max-width: 480px){
-
-  .rules-grid{
-    grid-template-columns:1fr;
-  }
-
-  .team-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .hero-logo{
-    width:70px;
-    height:70px;
-  }
-
-}
+        .team-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
     </style>
   </head>
   <body>
@@ -804,7 +742,6 @@
           href="javascript:void(0)"
         >
           <img src="Lexia.svg" alt="Lexia" />
-          <span class="nav-logo-name">Lexia</span>
         </a>
         <div class="nav-links">
           <span class="nav-link active" id="nav-home" onclick="showPage('home')"
@@ -938,7 +875,7 @@
 
         <div class="api-error" id="apiError">
           ⚠️ Could not reach the Python backend. Make sure
-          <code>app.py</code> is running on <strong>localhost:5000</strong>.
+          <code>app.py</code> is running on <strong>localhost:5001</strong>.
         </div>
 
         <div class="loading" id="loadingState">

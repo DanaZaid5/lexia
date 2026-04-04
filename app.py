@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import os
 
-# wordfreq for real corpus-based frequency scores
 try:
     from wordfreq import zipf_frequency
     WORDFREQ_AVAILABLE = True
@@ -13,7 +11,7 @@ app = Flask(__name__, static_folder="static")
 CORS(app)
 
 # =========================================
-# Difficulty Function
+# Difficulty
 # =========================================
 def get_difficulty_level(score):
     if score <= 6:
@@ -24,105 +22,338 @@ def get_difficulty_level(score):
         return "Hard"
 
 # =========================================
-# RULES
+# RULES (ORIGINAL LOGIC + UI FORMAT)
 # =========================================
+
+
 def word_length_rule(word):
     length = len(word)
+
     if length <= 3:
         score = 0
-    elif 4 <= length <= 6:
+    elif length <= 6:
         score = 1
     else:
         score = 2
-    return {"rule": "Word Length", "score": score}
 
+    return {
+        "rule": "Word Length",
+        "score": score,
+        "desc": f"{length} letters",
+        "detail": "Length-based scoring"
+    }
+
+confusable_pairs = [
+    ['b', 'd'], ['p', 'q'], ['m', 'n'], ['i', 'l'], ['u', 'n'],
+    ['c', 'e'], ['t', 'f'], ['m', 'w'], ['i', 'j'], ['h', 'n'],
+    ['c', 'a'], ['c', 'o'], ['c', 'd'], ['e', 'o'], ['a', 'd']
+]
 def visually_confusable_rule(word):
-    pairs = [['b','d'],['p','q'],['m','n'],['i','l']]
+    word = word.lower()
     found = set()
-    for pair in pairs:
-        for letter in word.lower():
+
+    for pair in confusable_pairs:
+        for letter in word:
             if letter in pair:
                 found.add(letter)
-    return {"rule": "Confusable Letters", "score": min(len(found), 2)}
+
+    score = len(found)
+
+    return {
+        "rule": "Confusable Letters",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
 
 def special_letters_rule(word):
+    vowels = ['a','e','i','o','u','y']
     score = 0
     word = word.lower()
-    for i in range(len(word)-1):
-        if word[i] == 'c' and word[i+1] in ['e','i','y']:
-            score += 1
-    return {"rule": "Special Letters", "score": min(score, 2)}
 
-def diphthongs_rule(word):
-    dips = ["aw","ew","ow"]
-    score = sum([1 for d in dips if d in word.lower()])
-    return {"rule": "Diphthongs", "score": min(score, 2)}
+    for i in range(len(word)):
+        if word[i] == 'c' and i+1 < len(word) and word[i+1] in ['e','i','y']:
+            score += 1
+
+        if word[i] == 'g' and i+1 < len(word) and word[i+1] in ['e','i','y']:
+            score += 1
+
+        if word[i] == 's' and i-1 >= 0 and i+1 < len(word):
+            if word[i-1] in vowels and word[i+1] in vowels:
+                score += 1
+
+    return {
+        "rule": "Special Letters",
+        "score": score,
+        "desc": "Soft C/G + vowel-surrounded S",
+        "detail": f"Count: {score}"
+    }
+
+
+def diphthongs_semi_vowels_rule(word):
+    word = word.lower()
+    score = 0
+
+    found = []
+
+    for dip in ["aw","ew","ow"]:
+        if dip in word:
+            score += 1
+            found.append(dip)
+
+    for i in range(1, len(word)):
+        if word[i] == 'y':
+            score += 1
+            found.append("y")
+
+    return {
+        "rule": "Diphthongs",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
 
 def vowel_team_rule(word):
-    teams = ["ea","ou","ie"]
-    score = sum([1 for t in teams if t in word.lower()])
-    return {"rule": "Vowel Teams", "score": min(score, 2)}
+    diphthongs = ["oi","ea","ou","ie","ue","oe"]
+    score = 0
+    word = word.lower()
+    found = []
+
+    for i in range(len(word)-1):
+        pair = word[i] + word[i+1]
+        if pair in diphthongs:
+            score += 1
+            found.append(pair)
+
+    return {
+        "rule": "Vowel Teams",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
 
 def magic_e_rule(word):
-    if len(word) >= 3 and word[-1] == 'e':
-        return {"rule": "Magic E", "score": 1}
-    return {"rule": "Magic E", "score": 0}
+    vowels = ['a','i','o','u']
+    score = 0
+    word = word.lower()
+
+    for i in range(len(word)-2):
+        if (
+            word[i] in vowels and
+            word[i+1] not in vowels and
+            word[i+2] == 'e' and
+            i+2 == len(word)-1
+        ):
+            score += 1
+
+    return {
+        "rule": "Magic E",
+        "score": score,
+        "desc": "Silent e pattern",
+        "detail": f"Count: {score}"
+    }
+
 
 def digraphs_rule(word):
-    g = ['sh','ch','th']
-    score = sum([1 for x in g if x in word])
-    return {"rule": "Digraphs", "score": min(score, 2)}
+    graphemes = ['sh','ch','th','wh','ph','tch','ck','dg','sc']
+    found = [g for g in graphemes if g in word]
+    score = len(found)
+
+    return {
+        "rule": "Digraphs",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
 
 def trigraphs_rule(word):
-    g = ['igh','tch']
-    score = sum([1 for x in g if x in word])
-    return {"rule": "Trigraphs", "score": min(score, 2)}
+    patterns = [
+        "air","are","dge","ear","eau","eer","eir","ere","ier",
+        "igh","oar","oor","ore","oul","our","tch","ure"
+    ]
+
+    found = []
+    word = word.lower()
+
+    for p in patterns:
+        if p in word:
+            found.append(p)
+
+    score = len(found)
+
+    return {
+        "rule": "Trigraphs",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
 
 def quadgraphs_rule(word):
-    g = ['ough']
-    score = sum([1 for x in g if x in word])
-    return {"rule": "Quadgraphs", "score": min(score, 2)}
+    patterns = ["augh","eigh","ngue","ough"]
+    found = []
+    word = word.lower()
 
-# 🔥 FIXED
+    for p in patterns:
+        if p in word:
+            found.append(p)
+
+    score = len(found)
+
+    return {
+        "rule": "Quadgraphs",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
+
+import pronouncing
+
 def multi_syllable_rule(word):
-    return {"rule": "Syllables", "score": 1}
+    phones = pronouncing.phones_for_word(word)
+    syllables = 1
+
+    if phones:
+        syllables = pronouncing.syllable_count(phones[0])
+
+    if syllables == 1:
+        score = 0
+    elif 2<= syllables <= 3:
+        score = 1
+    else:
+        score = 2
+
+    return {
+        "rule": "Syllables",
+        "score": score,
+        "desc": f"{syllables} syllable(s)",
+        "detail": "Based on CMU dictionary"
+    }
+
 
 def silent_letters_rule(word):
-    if word.startswith(("kn","wr","ps")):
-        return {"rule": "Silent Letters", "score": 1}
-    return {"rule": "Silent Letters", "score": 0}
+    patterns = ["ps","kn","wr","gn","mb","gh"]
+    found = []
+    word = word.lower()
 
-def x_rule(word):
-    return {"rule": "X Letter", "score": min(word.count('x'), 2)}
+    for p in patterns:
+        if word.startswith(p) or word.endswith(p):
+            found.append(p)
+
+    score = len(found)
+
+    return {
+        "rule": "Silent Letters",
+        "score": score,
+        "desc": f"{', '.join(found) if found else 'none'}",
+        "detail": f"Count: {score}"
+    }
+
+
+def x_position_rule(word):
+    count = word.lower().count('x')
+
+    return {
+        "rule": "X Letter",
+        "score": count,
+        "desc": f"x appears {count} times",
+        "detail": word
+    }
+
 
 def double_letters_rule(word):
-    score = sum([1 for i in range(len(word)-1) if word[i]==word[i+1]])
-    return {"rule": "Double Letters", "score": min(score, 2)}
+    word = word.lower()
+    count = sum(1 for i in range(len(word)-1) if word[i] == word[i+1])
+
+    return {
+        "rule": "Double Letters",
+        "score": count,
+        "desc": "Repeated letters",
+        "detail": f"Count: {count}"
+    }
+
+
 
 def affixes_rule(word):
-    if word.startswith("un") or word.endswith("ing"):
-        return {"rule": "Affixes", "score": 1}
-    return {"rule": "Affixes", "score": 0}
+    prefixes = [
+        "anti", "de", "dis", "en", "em", "fore", "in", "im", "il", "ir",
+        "inter", "mid", "mis", "non", "over", "pre", "re", "semi",
+        "sub", "super", "trans", "un", "under"
+    ]
+
+    suffixes = [
+        "able", "ible", "al", "ial", "ed", "en", "er", "est", "ful", "ic",
+        "ing", "ion", "tion", "ation", "ition", "ity", "ty", "ive", "ative", "itive",
+        "less", "ly", "ment", "ness", "ous", "eous", "ious", "s", "es", "y"
+    ]
+
+    score = 0
+    word = word.lower()
+
+    if any(word.startswith(p) for p in prefixes):
+        score += 1
+
+    if any(word.endswith(s) for s in suffixes):
+        score += 1
+
+    return {
+        "rule": "Affixes",
+        "score": score,
+        "desc": "Prefix / suffix detected",
+        "detail": f"Score: {score}"
+    }
+
+
 
 def multi_word_rule(word):
-    return {"rule": "Multi Word", "score": 2 if " " in word else 0}
+    score = 2 if " " in word else 0
+
+    return {
+        "rule": "Multi Word",
+        "score": score,
+        "desc": "Contains space" if score else "Single word",
+        "detail": word
+    }
+
 
 def frequency_rule(word):
     if not WORDFREQ_AVAILABLE:
-        return {"rule": "Frequency", "score": 0}
-    z = zipf_frequency(word.lower(), "en")
-    if z >= 5:
-        return {"rule": "Frequency", "score": 0}
-    elif z >= 4:
-        return {"rule": "Frequency", "score": 1}
-    else:
-        return {"rule": "Frequency", "score": 2}
+        return {
+            "rule": "Word Frequency",
+            "desc": "Uses Zipf frequency from wordfreq. More common words are easier.",
+            "score": 0,
+            "detail": "wordfreq library is not installed"
+        }
 
+    z = zipf_frequency(word.lower().strip(), "en")
+
+    if z >= 5:
+        score = 0
+        level = "daily/common"
+    elif z >= 4:
+        score = 1
+        level = "less common"
+    else:
+        score = 2
+        level = "rare"
+
+    return {
+        "rule": "Word Frequency",
+        "desc": "Daily and common words add 0, less common words add 1, and rare words add 2.",
+        "score": score,
+        "detail": f"Zipf = {z:.2f} ({level})"
+    }
+ 
 ALL_RULES = [
     word_length_rule,
     visually_confusable_rule,
     special_letters_rule,
-    diphthongs_rule,
+    diphthongs_semi_vowels_rule,
     vowel_team_rule,
     magic_e_rule,
     digraphs_rule,
@@ -130,7 +361,7 @@ ALL_RULES = [
     quadgraphs_rule,
     multi_syllable_rule,
     silent_letters_rule,
-    x_rule,
+    x_position_rule,
     double_letters_rule,
     affixes_rule,
     multi_word_rule,
@@ -181,4 +412,4 @@ def static_files(filename):
 # =========================================
 if __name__ == "__main__":
     print("\n🟢 Running...\n")
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=5001)
