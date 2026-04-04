@@ -278,7 +278,6 @@ def double_letters_rule(word):
     }
 
 
-
 def affixes_rule(word):
     prefixes = [
         "anti", "de", "dis", "en", "em", "fore", "in", "im", "il", "ir",
@@ -410,6 +409,8 @@ def static_files(filename):
 # =========================================
 # RUN
 # =========================================
+import os
 if __name__ == "__main__":
     print("\n🟢 Running...\n")
-    app.run(host="0.0.0.0", port=5001)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
