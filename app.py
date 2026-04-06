@@ -393,7 +393,7 @@ ALL_RULES = [
 @app.route("/analyze", methods=["POST"])
 def analyze():
     data = request.get_json()
-   word = (data.get("word") or "").strip().lower()
+    word = (data.get("word") or "").strip().lower()
 
     if not word:
         return jsonify({"error": "No word provided"}), 400
