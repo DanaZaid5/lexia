@@ -142,9 +142,9 @@ def diphthongs_semi_vowels_rule(word):
             found.append(dip)
 
     for i in range(1, len(word)):
-        if word[i] == 'y':
+        if word[i] == 'y' and i!=0:
             score += 1
-            found.append("y")
+            found.append("y is found")
 
     return {
         "rule": "Diphthongs",
