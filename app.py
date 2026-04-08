@@ -1,3 +1,22 @@
+import csv
+import os
+
+def load_homophones(filename):
+    words = set()
+    try:
+        with open(filename, newline='') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                for word in row:
+                    words.add(word.strip().lower())
+    except:
+        pass
+    return words
+
+BASE_DIR = os.path.dirname(__file__)
+HOMOPHONES = load_homophones(os.path.join(BASE_DIR, "homophones.csv"))
+
+
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
@@ -24,7 +43,20 @@ def get_difficulty_level(score):
 # =========================================
 # RULES (ORIGINAL LOGIC + UI FORMAT)
 # =========================================
+def homophones_rule(word):
+    if word in HOMOPHONES:
+        score = 1
+        found = True
+    else:
+        score = 0
+        found = False
 
+    return {
+        "rule": "Homophones",
+        "score": score,
+        "desc": "Word exists in homophones list" if found else "Not a homophone",
+        "detail": word
+    }
 
 def word_length_rule(word):
     length = len(word)
@@ -384,7 +416,8 @@ ALL_RULES = [
     double_letters_rule,
     affixes_rule,
     multi_word_rule,
-    frequency_rule
+    frequency_rule,
+    homophones_rule
 ]
 
 # =========================================
