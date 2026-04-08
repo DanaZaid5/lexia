@@ -38,9 +38,9 @@ CORS(app)
 # Difficulty
 # =========================================
 def get_difficulty_level(score):
-    if score <= 6:
+    if score <= 5:
         return "Easy"
-    elif score <= 13:
+    elif score <= 10:
         return "Medium"
     else:
         return "Hard"
