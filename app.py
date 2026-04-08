@@ -2,16 +2,21 @@ import csv
 import os
 
 def load_homophones(filename):
-    words = set()
+    homophones_map = {}
+
     try:
         with open(filename, newline='') as f:
             reader = csv.reader(f)
             for row in reader:
-                for word in row:
-                    words.add(word.strip().lower())
+                group = [w.strip().lower() for w in row if w.strip()]
+
+                for word in group:
+                    homophones_map[word] = group
+
     except:
         pass
-    return words
+
+    return homophones_map
 
 BASE_DIR = os.path.dirname(__file__)
 HOMOPHONES = load_homophones(os.path.join(BASE_DIR, "homophones.csv"))
@@ -44,18 +49,20 @@ def get_difficulty_level(score):
 # RULES (ORIGINAL LOGIC + UI FORMAT)
 # =========================================
 def homophones_rule(word):
-    if word in HOMOPHONES:
+    group = HOMOPHONES.get(word)
+
+    if group:
         score = 1
-        found = True
+        similar = [w for w in group if w != word]
     else:
         score = 0
-        found = False
+        similar = []
 
     return {
         "rule": "Homophones",
         "score": score,
-        "desc": "Word exists in homophones list" if found else "Not a homophone",
-        "detail": word
+        "desc": "Has similar sounding words" if group else "No homophones",
+        "detail": ", ".join(similar) if similar else "-"
     }
 
 def word_length_rule(word):
