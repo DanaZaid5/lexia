@@ -68,7 +68,7 @@ def homophones_rule(word):
 def word_length_rule(word):
     length = len(word)
 
-    if length <= 3:
+    if length <= 4:
         score = 0
     elif length <= 6:
         score = 1
@@ -197,7 +197,7 @@ def magic_e_rule(word):
 
 
 def digraphs_rule(word):
-    graphemes = ['sh','ch','th','wh','ph','tch','ck','dg','sc']
+    graphemes = ['sh','ch','th','wh','ph','ck','dg','sc']
     found = [g for g in graphemes if g in word]
     score = len(found)
 
@@ -315,13 +315,32 @@ def silent_letters_rule(word):
 
 
 def x_position_rule(word):
-    count = word.lower().count('x')
+    word = word.lower()
+    score = 0
+    positions = []
+
+    for i in range(len(word)):
+        if word[i] == 'x':
+            
+            # x في البداية
+            if i == 0:
+                score += 1
+                positions.append("start")
+            
+            # x في الوسط
+            elif 0 < i < len(word) - 1:
+                score += 1
+                positions.append("middle")
+
+        
+            elif i == len(word) - 1:
+                positions.append("end")
 
     return {
-        "rule": "X Letter",
-        "score": count,
-        "desc": f"x appears {count} times",
-        "detail": word
+        "rule": "X Position",
+        "score": score,
+        "desc": f"x positions: {', '.join(positions) if positions else 'none'}",
+        "detail": f"Count: {score}"
     }
 
 
@@ -347,7 +366,7 @@ def affixes_rule(word):
     suffixes = [
         "able", "ible", "al", "ial", "ed", "en", "er", "est", "ful", "ic",
         "ing", "ion", "tion", "ation", "ition", "ity", "ty", "ive", "ative", "itive",
-        "less", "ly", "ment", "ness", "ous", "eous", "ious", "s", "es", "y"
+        "less", "ly", "ment", "ness", "ous", "eous", "ious", "s", "es"
     ]
 
     score = 0

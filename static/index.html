@@ -923,19 +923,19 @@
       const RULE_META = [
         {
           name: "Word Length",
-          desc: "Score 0 if ≤ 3 chars, 1 if 4–6 chars, 2 if ≥ 7 chars.",
+          desc: "Score 0 if ≤ 4 chars, 1 if 5-6 chars, 2 if ≥ 7 chars.",
         },
         {
           name: "Visually Confusable Letters",
-          desc: "Counts letters from visually similar pairs: b/d, p/q, m/n, i/l, u/n, etc.",
+          desc: "Counts letters from visually similar pairs: b/d, p/q, m/n, i/l, u/n, c/e, t/f, m/w, i/j, h/n, c/a, c/o, c/d, e/o, a/d.",
         },
         {
           name: "Special Letter Rules",
-          desc: "Detects soft-C (ce/ci/cy), soft-G (ge/gi/gy), and intervocalic-S.",
+          desc: "Detects soft-C Eg. City, Center, soft-G Eg. Gym, Giant and intervocalic-S Eg. Cousin, Reason.",
         },
         {
           name: "Diphthongs & Semi-Vowels",
-          desc: "Counts aw/ew/ow diphthongs and mid-word Y used as a semi-vowel.",
+          desc: "Counts aw/ew/ow diphthongs and mid word Y used as a semi vowel.",
         },
         {
           name: "Vowel Teams",
@@ -947,11 +947,11 @@
         },
         {
           name: "Digraphs",
-          desc: "Two-letter graphemes: sh, ch, th, wh, ph, tch, ck, dg, sc.",
+          desc: "Two letter graphemes: sh, ch, th, wh, ph, ck, dg, sc.",
         },
         {
           name: "Trigraphs",
-          desc: "Three-letter graphemes: air, are, dge, ear, eau, eer, igh, oor, ore, our, ure, etc.",
+          desc: "Three-letter graphemes: air ,are ,dge ,ear ,eau ,eer ,eir ,ere ,ier ,igh ,oar ,oor ,ore ,oul ,our ,tch ,ure.",
         },
         {
           name: "Quadgraphs",
@@ -965,7 +965,10 @@
           name: "Silent Letter Patterns",
           desc: "Detects ps, kn, wr, gn, mb, gh at the start or end of a word.",
         },
-        { name: "Letter X", desc: "Counts occurrences of the letter X." },
+        {
+          name: "Letter X",
+          desc: "When x appears at the beginning of a word, it is often pronounced as /z/ (e.g., xylophone) When “x” appears in the middle of a word, it is often pronounced as /ks/ or /gz/ (e.g., box)",
+        },
         {
           name: "Double Letters",
           desc: "Counts consecutive identical letter pairs (ll, tt, ss, etc.).",
@@ -975,8 +978,8 @@
           desc: "Score +1 for a known prefix, +1 for a known suffix (max 2).",
         },
         {
-          name: "Multi-Word",
-          desc: "Score 2 if the input contains a space, 0 otherwise.",
+          name: "Multi Word",
+          desc: "Score 2 if the word is combination of more than one word.",
         },
         {
           name: "Word Frequency",
