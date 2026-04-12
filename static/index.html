@@ -1048,8 +1048,8 @@
 
       function renderResults(data) {
         const rules = data.rules;
-        const triggered = rules.filter((r) => r.score > 0);
-        const notTriggered = rules.filter((r) => r.score === 0);
+        const triggered = rules.filter((r) => r.triggered);
+        const notTriggered = rules.filter((r) => !r.triggered);
 
         document.getElementById("ssWord").textContent =
           data.word.charAt(0).toUpperCase() + data.word.slice(1);
@@ -1078,16 +1078,16 @@
         ]
           .map(
             (r) => `
-    <div class="rr ${r.score > 0 ? "trig" : "no-trig"}">
-      <div class="rr-icon">${r.score > 0 ? "✅" : "❌"}</div>
+    <div class="rr ${r.triggered ? "trig" : "no-trig"}">
+      <div class="rr-icon">${r.triggered ? "✅" : "❌"}</div>
       <div>
         <div class="rr-name">${r.rule}</div>
         <div class="rr-desc">${r.desc}</div>
         <div class="rr-detail">${r.detail}</div>
       </div>
       <div class="rr-right">
-        <span class="status-badge ${r.score > 0 ? "yes" : "no"}">${r.score > 0 ? "Triggered" : "Not triggered"}</span>
-        <span class="rr-score">Score: ${r.score}</span>
+        <span class="status-badge ${r.triggered ? "yes" : "no"}">${r.triggered ? "Triggered" : "Not triggered"}</span>
+        <span class="rr-score">+${r.added}</span>
       </div>
     </div>`,
           )

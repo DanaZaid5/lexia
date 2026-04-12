@@ -66,6 +66,7 @@ def homophones_rule(word):
         "rule": "Homophones",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": "Has similar sounding words" if group else "No homophones",
         "detail": ", ".join(similar) if similar else "-"
     }
@@ -88,6 +89,7 @@ def word_length_rule(word):
         "rule": "Word Length",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{length} letters",
         "detail": "Length-based scoring"
     }
@@ -115,6 +117,7 @@ def visually_confusable_rule(word):
         "rule": "Confusable Letters",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {len(found)}"
     }
@@ -143,6 +146,7 @@ def special_letters_rule(word):
         "rule": "Special Letters",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": "Soft C/G + vowel-surrounded S",
         "detail": f"Count: {score}"
     }
@@ -171,6 +175,7 @@ def diphthongs_semi_vowels_rule(word):
         "rule": "Diphthongs",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {score}"
     }
@@ -195,6 +200,7 @@ def vowel_team_rule(word):
         "rule": "Vowel Teams",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {score}"
     }
@@ -221,6 +227,7 @@ def magic_e_rule(word):
         "rule": "Magic E",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": "Silent e pattern",
         "detail": f"Count: {score}"
     }
@@ -238,6 +245,7 @@ def digraphs_rule(word):
         "rule": "Digraphs",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {len(found)}"
     }
@@ -265,6 +273,7 @@ def trigraphs_rule(word):
         "rule": "Trigraphs",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {len(found)}"
     }
@@ -288,6 +297,7 @@ def quadgraphs_rule(word):
         "rule": "Quadgraphs",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {len(found)}"
     }
@@ -337,6 +347,7 @@ def multi_syllable_rule(word):
         "rule": "Syllables",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{syllables} syllable(s)",
         "detail": "Estimated"
     }
@@ -360,6 +371,7 @@ def silent_letters_rule(word):
         "rule": "Silent Letters",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"{', '.join(found) if found else 'none'}",
         "detail": f"Count: {len(found)}"
     }
@@ -394,6 +406,7 @@ def x_position_rule(word):
         "rule": "X Position",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": f"x positions: {', '.join(positions) if positions else 'none'}",
         "detail": f"Count: {score}"
     }
@@ -412,6 +425,7 @@ def double_letters_rule(word):
         "rule": "Double Letters",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": "Repeated letters",
         "detail": f"Count: {count}"
     }
@@ -445,6 +459,7 @@ def affixes_rule(word):
         "rule": "Affixes",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": "Prefix / suffix detected",
         "detail": f"Score: {score}"
     }
@@ -462,6 +477,7 @@ def multi_word_rule(word):
         "rule": "Multi Word",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "desc": "Contains space" if " " in word else "Single word",
         "detail": word
     }
@@ -477,6 +493,7 @@ def frequency_rule(word):
             "desc": "Uses Zipf frequency from wordfreq. More common words are easier.",
             "score": 0,
             "added": added,
+            "triggered": added > 0,
             "detail": "wordfreq library is not installed"
         }
 
@@ -499,6 +516,7 @@ def frequency_rule(word):
         "desc": "Daily and common words add 0, less common words add 1, and rare words add 2.",
         "score": score,
         "added": added,
+        "triggered": added > 0,
         "detail": f"Zipf = {z:.2f} ({level})"
     }
  
