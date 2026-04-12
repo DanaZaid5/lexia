@@ -33,7 +33,7 @@ except ImportError:
 
 app = Flask(__name__, static_folder="static")
 CORS(app)
-
+score=0
 # =========================================
 # Difficulty
 # =========================================
@@ -49,13 +49,14 @@ def get_difficulty_level(score):
 # RULES (ORIGINAL LOGIC + UI FORMAT)
 # =========================================
 def homophones_rule(word):
+    global score
     group = HOMOPHONES.get(word)
 
     if group:
-        score = 1
+        score += 1
         similar = [w for w in group if w != word]
     else:
-        score = 0
+        score += 0
         similar = []
 
     return {
@@ -66,14 +67,15 @@ def homophones_rule(word):
     }
 
 def word_length_rule(word):
+    global score
     length = len(word)
 
     if length <= 4:
-        score = 0
+        score += 0
     elif length <= 6:
-        score = 1
+        score += 1
     else:
-        score = 2
+        score += 2
 
     return {
         "rule": "Word Length",
@@ -88,6 +90,7 @@ confusable_pairs = [
     ['c', 'a'], ['c', 'o'], ['c', 'd'], ['e', 'o'], ['a', 'd']
 ]
 def visually_confusable_rule(word):
+    global score
     word = word.lower()
     found = set()
 
@@ -96,7 +99,7 @@ def visually_confusable_rule(word):
             if letter in pair:
                 found.add(letter)
 
-    score = len(found)
+    score += len(found)
 
     return {
         "rule": "Confusable Letters",
@@ -107,8 +110,8 @@ def visually_confusable_rule(word):
 
 
 def special_letters_rule(word):
+    global score
     vowels = ['a','e','i','o','u','y']
-    score = 0
     word = word.lower()
 
     for i in range(len(word)):
@@ -131,8 +134,8 @@ def special_letters_rule(word):
 
 
 def diphthongs_semi_vowels_rule(word):
+    global score
     word = word.lower()
-    score = 0
 
     found = []
 
@@ -155,8 +158,8 @@ def diphthongs_semi_vowels_rule(word):
 
 
 def vowel_team_rule(word):
+    global score
     diphthongs = ["oi","ea","ou","ie","ue","oe"]
-    score = 0
     word = word.lower()
     found = []
 
@@ -175,8 +178,8 @@ def vowel_team_rule(word):
 
 
 def magic_e_rule(word):
+    global score
     vowels = ['a','i','o','u']
-    score = 0
     word = word.lower()
 
     for i in range(len(word)-2):
@@ -197,9 +200,10 @@ def magic_e_rule(word):
 
 
 def digraphs_rule(word):
+    global score
     graphemes = ['sh','ch','th','wh','ph','ck','dg','sc']
     found = [g for g in graphemes if g in word]
-    score = len(found)
+    score += len(found)
 
     return {
         "rule": "Digraphs",
@@ -210,6 +214,7 @@ def digraphs_rule(word):
 
 
 def trigraphs_rule(word):
+    global score
     patterns = [
         "air","are","dge","ear","eau","eer","eir","ere","ier",
         "igh","oar","oor","ore","oul","our","tch","ure"
@@ -222,7 +227,7 @@ def trigraphs_rule(word):
         if p in word:
             found.append(p)
 
-    score = len(found)
+    score += len(found)
 
     return {
         "rule": "Trigraphs",
@@ -233,6 +238,7 @@ def trigraphs_rule(word):
 
 
 def quadgraphs_rule(word):
+    global score
     patterns = ["augh","eigh","ngue","ough"]
     found = []
     word = word.lower()
@@ -241,7 +247,7 @@ def quadgraphs_rule(word):
         if p in word:
             found.append(p)
 
-    score = len(found)
+    score += len(found)
 
     return {
         "rule": "Quadgraphs",
@@ -258,6 +264,7 @@ except:
     PRONOUNCING_AVAILABLE = False
 
 def multi_syllable_rule(word):
+    global score
     syllables = 1
 
     if PRONOUNCING_AVAILABLE:
@@ -281,11 +288,11 @@ def multi_syllable_rule(word):
         syllables = max(count, 1)
 
     if syllables == 1:
-        score = 0
+        score += 0
     elif syllables <= 3:
-        score = 1
+        score += 1
     else:
-        score = 2
+        score += 2
 
     return {
         "rule": "Syllables",
@@ -296,6 +303,7 @@ def multi_syllable_rule(word):
 
 
 def silent_letters_rule(word):
+    global score
     patterns = ["ps","kn","wr","gn","mb","gh"]
     found = []
     word = word.lower()
@@ -304,7 +312,7 @@ def silent_letters_rule(word):
         if word.startswith(p) or word.endswith(p):
             found.append(p)
 
-    score = len(found)
+    score += len(found)
 
     return {
         "rule": "Silent Letters",
@@ -315,8 +323,8 @@ def silent_letters_rule(word):
 
 
 def x_position_rule(word):
+    global score
     word = word.lower()
-    score = 0
     positions = []
 
     for i in range(len(word)):
@@ -345,18 +353,21 @@ def x_position_rule(word):
 
 
 def double_letters_rule(word):
+    global score
     word = word.lower()
     count = sum(1 for i in range(len(word)-1) if word[i] == word[i+1])
 
+    score += count
+
     return {
         "rule": "Double Letters",
-        "score": count,
+        "score": score,
         "desc": "Repeated letters",
         "detail": f"Count: {count}"
     }
 
-
 def affixes_rule(word):
+    global score
     prefixes = [
         "anti", "de", "dis", "en", "em", "fore", "in", "im", "il", "ir",
         "inter", "mid", "mis", "non", "over", "pre", "re", "semi",
@@ -369,7 +380,6 @@ def affixes_rule(word):
         "less", "ly", "ment", "ness", "ous", "eous", "ious", "s", "es"
     ]
 
-    score = 0
     word = word.lower()
 
     if any(word.startswith(p) for p in prefixes):
@@ -388,17 +398,19 @@ def affixes_rule(word):
 
 
 def multi_word_rule(word):
-    score = 2 if " " in word else 0
+    global score
+    score += 2 if " " in word else 0
 
     return {
         "rule": "Multi Word",
         "score": score,
-        "desc": "Contains space" if score else "Single word",
+       "desc": "Contains space" if " " in word else "Single word",
         "detail": word
     }
 
 
 def frequency_rule(word):
+    global score
     if not WORDFREQ_AVAILABLE:
         return {
             "rule": "Word Frequency",
@@ -410,13 +422,13 @@ def frequency_rule(word):
     z = zipf_frequency(word.lower().strip(), "en")
 
     if z >= 5:
-        score = 0
+        score += 0
         level = "daily/common"
     elif z >= 4:
-        score = 1
+        score += 1
         level = "less common"
     else:
-        score = 2
+        score += 2
         level = "rare"
 
     return {
@@ -451,19 +463,19 @@ ALL_RULES = [
 # =========================================
 @app.route("/analyze", methods=["POST"])
 def analyze():
+    global score
+    score = 0
+
     data = request.get_json()
     word = (data.get("word") or "").strip().lower()
 
-    if not word:
-        return jsonify({"error": "No word provided"}), 400
-
     results = []
-    total = 0
 
     for rule_fn in ALL_RULES:
         result = rule_fn(word)
         results.append(result)
-        total += result["score"]
+
+    total = score
 
     difficulty = get_difficulty_level(total)
 
