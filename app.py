@@ -312,7 +312,7 @@ except:
 def multi_syllable_rule(word):
     global score
     before = score
-    syllables = 1
+    syllables = 0
 
     if PRONOUNCING_AVAILABLE:
         phones = pronouncing.phones_for_word(word)
